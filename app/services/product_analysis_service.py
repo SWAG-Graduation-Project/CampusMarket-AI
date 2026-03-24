@@ -1,5 +1,6 @@
 import json
 
+from fastapi import HTTPException, status
 from google.genai import types
 
 from app.constants.categories import CATEGORY_MAP
@@ -37,28 +38,45 @@ def _parse_response(text: str) -> dict:
         text = text.split("```")[1]
         if text.startswith("json"):
             text = text[4:]
-    return json.loads(text.strip())
+    try:
+        return json.loads(text.strip())
+    except json.JSONDecodeError:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Gemini 응답을 파싱할 수 없습니다. 다시 시도해주세요.",
+        )
 
 
-async def analyze_product(image_bytes_list: list[bytes]) -> ProductAnalysisResponse:
+async def analyze_product(image_data: list[tuple[bytes, str]]) -> ProductAnalysisResponse:
     client = get_client()
 
     contents: list = [_build_prompt()]
-    for image_bytes in image_bytes_list:
-        contents.append(types.Part.from_bytes(data=image_bytes, mime_type="image/jpeg"))
+    for image_bytes, mime_type in image_data:
+        contents.append(types.Part.from_bytes(data=image_bytes, mime_type=mime_type))
 
-    response = client.models.generate_content(
+    response = await client.aio.models.generate_content(
         model="gemini-3-flash-preview",
         contents=contents,
     )
 
     data = _parse_response(response.text)
 
-    return ProductAnalysisResponse(
-        main_category=data["main_category"],
-        sub_category=data["sub_category"],
-        product_name=data["product_name"],
-        color=data["color"],
-        condition=ProductCondition(data["condition"]),
-        description=data["description"],
-    )
+    try:
+        return ProductAnalysisResponse(
+            main_category=data["main_category"],
+            sub_category=data["sub_category"],
+            product_name=data["product_name"],
+            color=data["color"],
+            condition=ProductCondition(data["condition"]),
+            description=data["description"],
+        )
+    except KeyError as e:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Gemini 응답에 필수 항목이 누락되었습니다: {e}",
+        )
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Gemini가 유효하지 않은 상태값을 반환했습니다.",
+        )

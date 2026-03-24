@@ -13,5 +13,5 @@ async def analyze_product_endpoint(
 ):
     """상품 이미지 분석 후 카테고리, 상품명, 색상, 상태, 설명 반환 (최대 5장)"""
     await validate_images(files)
-    image_bytes_list = [await f.read() for f in files]
-    return await analyze_product(image_bytes_list)
+    image_data = [(await f.read(), f.content_type) for f in files]
+    return await analyze_product(image_data)
