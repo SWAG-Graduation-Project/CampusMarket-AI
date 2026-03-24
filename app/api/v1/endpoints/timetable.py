@@ -1,11 +1,11 @@
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, File, UploadFile
 
 from app.schemas.timetable import TimetableResponse
 
 router = APIRouter()
 
 
-@router.post("/parse-timetable", response_model=TimetableResponse)
+@router.post("/parse-timetable", response_model=TimetableResponse, summary="시간표 이미지 파싱")
 async def parse_timetable(
     file: UploadFile = File(...),
 ):
