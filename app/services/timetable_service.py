@@ -4,6 +4,7 @@ from collections import defaultdict
 
 from fastapi import HTTPException, status
 from google.genai import types
+from pydantic import ValidationError
 
 from app.core.gemini_client import get_client
 from app.schemas.timetable import ClassEntry, TimetableResponse
@@ -31,8 +32,11 @@ _GEMINI_TIMEOUT = 60.0
 
 
 def _to_minutes(t: str) -> int:
-    h, m = map(int, t.split(":"))
-    return h * 60 + m
+    try:
+        h, m = map(int, t.split(":"))
+        return h * 60 + m
+    except (ValueError, AttributeError):
+        return 0
 
 
 def _from_minutes(mins: int) -> str:
@@ -114,7 +118,7 @@ async def parse_timetable(image_bytes: bytes, mime_type: str) -> TimetableRespon
 
     try:
         classes = [ClassEntry(**item) for item in raw_list]
-    except (KeyError, ValueError) as e:
+    except (KeyError, ValueError, ValidationError) as e:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail=f"Gemini 응답에 누락되거나 잘못된 항목이 있습니다: {e}",

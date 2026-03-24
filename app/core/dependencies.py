@@ -5,6 +5,15 @@ from app.core.config import settings
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
 
 
+async def validate_image(file: UploadFile) -> UploadFile:
+    if file.content_type not in ALLOWED_IMAGE_TYPES:
+        raise HTTPException(
+            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            detail=f"지원하지 않는 파일 형식: {file.content_type}",
+        )
+    return file
+
+
 async def validate_images(files: list[UploadFile]) -> list[UploadFile]:
     if not files:
         raise HTTPException(
