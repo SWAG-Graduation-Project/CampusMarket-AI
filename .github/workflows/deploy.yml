@@ -1,20 +1,24 @@
-name: Deploy to Oracle Cloud
+name: Deploy to HuggingFace Spaces
 
 on:
-  workflow_dispatch: # Oracle VM 세팅 완료 후 push 트리거로 변경 예정
+  push:
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Oracle Cloud VM에 SSH 배포
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          host: ${{ secrets.ORACLE_HOST }}
-          username: ${{ secrets.ORACLE_USER }}
-          key: ${{ secrets.ORACLE_SSH_KEY }}
-          script: |
-            cd ~/CampusMarket-AI
-            git pull origin main
-            docker compose up --build -d
+          fetch-depth: 0
+          lfs: true
+
+      - name: HuggingFace Spaces 배포
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git remote add space https://watertrue:$HF_TOKEN@huggingface.co/spaces/watertrue/campusmarket-ai
+          git push space main:main --force
