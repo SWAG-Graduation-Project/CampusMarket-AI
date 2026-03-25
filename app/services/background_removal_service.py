@@ -8,7 +8,14 @@ from rembg import new_session, remove
 _MAX_SIDE = 1024  # 리사이즈 기준 긴 변 최대 픽셀
 _WEBP_QUALITY = 85
 
-_session = new_session()  # 모델 최초 로드 후 재사용
+_session = None  # 첫 요청 시 lazy 초기화
+
+
+def _get_session():
+    global _session
+    if _session is None:
+        _session = new_session()
+    return _session
 
 
 def _resize(img: Image.Image) -> Image.Image:
@@ -24,7 +31,7 @@ def _process_single(image_bytes: bytes) -> str:
     """단일 이미지 배경 제거 후 base64 WebP 반환 (CPU-bound, 동기)"""
     img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
     img = _resize(img)
-    result_img = remove(img, session=_session).convert("RGBA")
+    result_img = remove(img, session=_get_session()).convert("RGBA")
     buf = io.BytesIO()
     result_img.save(buf, format="WEBP", quality=_WEBP_QUALITY)
     return base64.b64encode(buf.getvalue()).decode()

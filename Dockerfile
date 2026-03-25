@@ -12,10 +12,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# rembg 모델 미리 다운로드 (컨테이너 재시작마다 170MB 다운로드 방지)
-ENV U2NET_HOME=/app/.u2net
-RUN python -c "from rembg import new_session; new_session()"
-
 COPY app/ app/
 
 # 보안: 비루트 사용자 실행
