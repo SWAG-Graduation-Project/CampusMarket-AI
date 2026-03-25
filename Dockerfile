@@ -14,6 +14,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app/ app/
 
+# numba 캐시 디렉토리를 쓰기 가능한 위치로 지정 (pymatting 의존성)
+ENV NUMBA_CACHE_DIR=/tmp/numba_cache
+
 # 보안: 비루트 사용자 실행
 RUN adduser --disabled-password --no-create-home appuser \
     && chown -R appuser /app
