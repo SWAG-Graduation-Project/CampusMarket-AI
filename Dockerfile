@@ -2,16 +2,27 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# OpenCV 시스템 의존성
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
 # 의존성 레이어 캐싱을 위해 requirements만 먼저 복사
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# rembg 모델 미리 다운로드 (컨테이너 재시작마다 170MB 다운로드 방지)
+ENV U2NET_HOME=/app/.u2net
+RUN python -c "from rembg import new_session; new_session()"
+
 COPY app/ app/
 
 # 보안: 비루트 사용자 실행
-RUN adduser --disabled-password --no-create-home appuser
+RUN adduser --disabled-password --no-create-home appuser \
+    && chown -R appuser /app
 USER appuser
 
-EXPOSE 8000
+EXPOSE 7860
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7860"]

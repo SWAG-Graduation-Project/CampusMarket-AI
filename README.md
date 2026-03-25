@@ -180,28 +180,29 @@ Gemini가 중복으로 인식한 수업 슬롯은 시작 시간을 자동으로 
 
 ## ☀️ 시작하기
 
-### 사전 요구사항
+### 로컬 실행
 
-- Python 3.11+
-- Google Gemini API 키
-
-### 설치
+**사전 요구사항**: Python 3.11+, Google Gemini API 키
 
 ```bash
 git clone https://github.com/SWAG-Graduation-Project/CampusMarket-AI.git
 cd CampusMarket-AI
 python -m venv .venv
-source .venv\Scripts\activate 
+source .venv/Scripts/activate  # macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 환경변수
-
-프로젝트 루트에 `.env` 파일 생성
+프로젝트 루트에 `.env` 파일 생성:
 
 ```env
 GEMINI_API_KEY=your_gemini_api_key_here
 ```
+
+```bash
+uvicorn app.main:app --reload
+```
+
+### 환경변수
 
 | 변수 | 기본값 | 설명 |
 |---|---|---|
@@ -210,11 +211,14 @@ GEMINI_API_KEY=your_gemini_api_key_here
 | `MAX_IMAGE_SIZE_MB` | `10` | 이미지 최대 크기 (MB) |
 | `ALLOWED_ORIGINS` | `["*"]` | CORS 허용 오리진 |
 
-### 실행
+---
 
-```bash
-uvicorn app.main:app --reload
-```
+## 🚀 배포 (HuggingFace Spaces)
+
+HuggingFace Spaces Docker
+**Base URL**: `https://watertrue-campusmarket-ai.hf.space`
+**Swagger UI**: `https://watertrue-campusmarket-ai.hf.space/docs`
+
 
 ---
 
