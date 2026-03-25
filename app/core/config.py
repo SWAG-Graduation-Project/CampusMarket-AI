@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     ALLOWED_ORIGINS: list[str] = ["*"]
 
     GEMINI_API_KEY: str = ""
+    API_SECRET_KEY: str = ""
 
     MAX_UPLOAD_IMAGES: int = 5
     MAX_IMAGE_SIZE_MB: int = 10

@@ -1,6 +1,14 @@
-from fastapi import UploadFile, HTTPException, status
+from fastapi import UploadFile, HTTPException, Header, status
 
 from app.core.config import settings
+
+
+async def verify_api_key(x_api_key: str = Header(...)):
+    if settings.API_SECRET_KEY and x_api_key != settings.API_SECRET_KEY:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="유효하지 않은 API 키입니다.",
+        )
 
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
 
