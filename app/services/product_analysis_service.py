@@ -14,7 +14,7 @@ _PROMPT = """
 {categories}
 
 {{
-  "main_category": "위 목록 중 대카테고리명",
+  "major": "위 목록 중 대카테고리명",
   "sub_category": "위 목록 중 소카테고리명",
   "product_name": "상품명",
   "color": "대표 색상 단어 (예: 검정, 흰색, 네이비)",
@@ -63,7 +63,7 @@ async def analyze_product(image_data: list[tuple[bytes, str]]) -> ProductAnalysi
 
     try:
         return ProductAnalysisResponse(
-            main_category=data["main_category"],
+            major=data["major"],
             sub_category=data["sub_category"],
             product_name=data["product_name"],
             color=data["color"],

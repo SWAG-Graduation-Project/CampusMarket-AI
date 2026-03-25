@@ -10,7 +10,7 @@ class ProductCondition(str, Enum):
 
 
 class ProductAnalysisResponse(BaseModel):
-    main_category: str
+    major: str
     sub_category: str
     product_name: str
     color: str

@@ -11,7 +11,7 @@ router = APIRouter()
 async def remove_background_endpoint(
     files: list[UploadFile] = File(...),
 ):
-    """배경 제거 후 투명 PNG 반환 (최대 5장)"""
+    """배경 제거 후 base64 WebP 반환 (최대 5장)"""
     await validate_images(files)
     image_data = [(await f.read(), f.content_type) for f in files]
     images = await remove_backgrounds(image_data)
