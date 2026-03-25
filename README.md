@@ -3,7 +3,7 @@ image TODO
 
 **CampusMarket** 캠퍼스 중고거래 플랫폼의 AI 백엔드 서비스입니다.
 <br>
-3가지 AI 기능: Google Gemini와 rembg(U2Net)를 기반으로 상품 이미지 분석, 배경 제거, 시간표 파싱
+##### 3가지 AI 기능: Google Gemini와 rembg(U2Net)를 기반으로 상품 이미지 분석, 배경 제거, 시간표 파싱
 ---
 
 ## 📢 시스템 아키텍처 & IA
