@@ -12,9 +12,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 모델 및 캐시 경로 설정
+# 모델 경로 및 numba 설정
 ENV U2NET_HOME=/app/.u2net
-ENV NUMBA_CACHE_DIR=/tmp/numba_cache
+ENV NUMBA_DISABLE_JIT=1
 
 # U2Net 모델 사전 다운로드 (root 권한일 때 실행)
 RUN python -c "from rembg import new_session; new_session()"
