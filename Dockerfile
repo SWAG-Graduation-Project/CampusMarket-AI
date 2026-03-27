@@ -12,10 +12,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app/ app/
-
-# numba 캐시 디렉토리를 쓰기 가능한 위치로 지정 (pymatting 의존성)
+# 모델 및 캐시 경로 설정
+ENV U2NET_HOME=/app/.u2net
 ENV NUMBA_CACHE_DIR=/tmp/numba_cache
+
+# U2Net 모델 사전 다운로드 (root 권한일 때 실행)
+RUN python -c "from rembg import new_session; new_session()"
+
+COPY app/ app/
 
 # 보안: 비루트 사용자 실행
 RUN adduser --disabled-password --no-create-home appuser \
