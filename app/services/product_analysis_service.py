@@ -1,3 +1,4 @@
+import asyncio
 import json
 
 from fastapi import HTTPException, status
@@ -54,10 +55,19 @@ async def analyze_product(image_data: list[tuple[bytes, str]]) -> ProductAnalysi
     for image_bytes, mime_type in image_data:
         contents.append(types.Part.from_bytes(data=image_bytes, mime_type=mime_type))
 
-    response = await client.aio.models.generate_content(
-        model="gemini-3-flash-preview",
-        contents=contents,
-    )
+    try:
+        response = await asyncio.wait_for(
+            client.aio.models.generate_content(
+                model="gemini-3-flash-preview",
+                contents=contents,
+            ),
+            timeout=60.0,
+        )
+    except asyncio.TimeoutError:
+        raise HTTPException(
+            status_code=status.HTTP_504_GATEWAY_TIMEOUT,
+            detail="Gemini API 응답 시간이 초과되었습니다.",
+        )
 
     data = _parse_response(response.text)
 

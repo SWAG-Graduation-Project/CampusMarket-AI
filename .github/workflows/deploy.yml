@@ -20,5 +20,5 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git remote add space https://watertrue:$HF_TOKEN@huggingface.co/spaces/watertrue/campusmarket-ai
+          git remote add space https://watertrue:$HF_TOKEN@huggingface.co/spaces/watertrue/campusmarket
           git push space main:main --force
