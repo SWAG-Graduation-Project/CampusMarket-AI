@@ -2,7 +2,7 @@ import asyncio
 import json
 
 from fastapi import HTTPException, status
-from google.genai import types
+from google.genai import errors as genai_errors, types
 
 from app.constants.categories import CATEGORY_MAP
 from app.core.gemini_client import DEFAULT_MODEL, get_client
@@ -67,6 +67,16 @@ async def analyze_product(image_data: list[tuple[bytes, str]]) -> ProductAnalysi
         raise HTTPException(
             status_code=status.HTTP_504_GATEWAY_TIMEOUT,
             detail="Gemini API 응답 시간이 초과되었습니다.",
+        )
+    except genai_errors.ClientError as e:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Gemini API 오류: {e.code}",
+        )
+    except genai_errors.ServerError:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Gemini 서버가 일시적으로 사용 불가합니다. 잠시 후 다시 시도해주세요.",
         )
 
     data = _parse_response(response.text)

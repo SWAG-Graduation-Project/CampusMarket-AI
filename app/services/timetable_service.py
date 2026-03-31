@@ -3,7 +3,7 @@ import json
 from collections import defaultdict
 
 from fastapi import HTTPException, status
-from google.genai import types
+from google.genai import errors as genai_errors, types
 from pydantic import ValidationError
 
 from app.core.gemini_client import DEFAULT_MODEL, get_client
@@ -112,6 +112,16 @@ async def parse_timetable(image_bytes: bytes, mime_type: str) -> TimetableRespon
         raise HTTPException(
             status_code=status.HTTP_504_GATEWAY_TIMEOUT,
             detail="Gemini API 응답 시간이 초과되었습니다. 다시 시도해주세요. (제한: 60초)",
+        )
+    except genai_errors.ClientError as e:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Gemini API 오류: {e.code}",
+        )
+    except genai_errors.ServerError:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail="Gemini 서버가 일시적으로 사용 불가합니다. 잠시 후 다시 시도해주세요.",
         )
 
     raw_list = _parse_response(response.text)
