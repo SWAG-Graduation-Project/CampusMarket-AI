@@ -6,7 +6,7 @@ from fastapi import HTTPException, status
 from google.genai import types
 from pydantic import ValidationError
 
-from app.core.gemini_client import get_client
+from app.core.gemini_client import DEFAULT_MODEL, get_client
 from app.schemas.timetable import ClassEntry, TimetableResponse
 
 _PROMPT = """
@@ -28,7 +28,7 @@ _PROMPT = """
 ]
 """
 
-_GEMINI_TIMEOUT = 60.0
+_GEMINI_TIMEOUT = 120.0
 
 
 def _to_minutes(t: str) -> int:
@@ -103,7 +103,7 @@ async def parse_timetable(image_bytes: bytes, mime_type: str) -> TimetableRespon
     try:
         response = await asyncio.wait_for(
             client.aio.models.generate_content(
-                model="gemini-3-flash-preview",
+                model=DEFAULT_MODEL,
                 contents=contents,
             ),
             timeout=_GEMINI_TIMEOUT,

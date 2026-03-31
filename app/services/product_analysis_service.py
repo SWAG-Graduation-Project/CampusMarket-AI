@@ -5,7 +5,7 @@ from fastapi import HTTPException, status
 from google.genai import types
 
 from app.constants.categories import CATEGORY_MAP
-from app.core.gemini_client import get_client
+from app.core.gemini_client import DEFAULT_MODEL, get_client
 from app.schemas.product_analysis import ProductAnalysisResponse, ProductCondition
 
 _PROMPT = """
@@ -58,10 +58,10 @@ async def analyze_product(image_data: list[tuple[bytes, str]]) -> ProductAnalysi
     try:
         response = await asyncio.wait_for(
             client.aio.models.generate_content(
-                model="gemini-3-flash-preview",
+                model=DEFAULT_MODEL,
                 contents=contents,
             ),
-            timeout=60.0,
+            timeout=120.0,
         )
     except asyncio.TimeoutError:
         raise HTTPException(
