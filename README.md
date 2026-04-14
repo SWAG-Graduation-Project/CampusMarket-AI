@@ -8,7 +8,7 @@ pinned: false
 ---
 
 # CampusMarket AI
-image TODO
+[![hwamyeon-kaebcheo-2026-04-14-193813.jpg](https://i.postimg.cc/Pfz9NqjR/hwamyeon-kaebcheo-2026-04-14-193813.jpg)](https://postimg.cc/QVC0yhVQ)
 
 **CampusMarket** 캠퍼스 중고거래 플랫폼의 AI 백엔드 서비스입니다.
 <br>
@@ -17,7 +17,9 @@ image TODO
 
 ## 📢 시스템 아키텍처 & IA
 
-TODO
+[![hwamyeon-kaebcheo-2026-04-14-194022.jpg](https://i.postimg.cc/BQRT0xzW/hwamyeon-kaebcheo-2026-04-14-194022.jpg)](https://postimg.cc/dLmkRTvn)
+
+[![hwamyeon-kaebcheo-2026-04-14-194038.jpg](https://i.postimg.cc/PJ9wdj2q/hwamyeon-kaebcheo-2026-04-14-194038.jpg)](https://postimg.cc/64V3hDss)
 
 
 ---
